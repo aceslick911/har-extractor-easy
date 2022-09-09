@@ -1,10 +1,15 @@
 import * as fs from "fs";
 import { Har, Entry } from "har-format";
 import * as path from "path";
+import { unusedFilename } from "unused-filename";
 
-const filenamify = require("filenamify");
-const humanizeUrl = require("humanize-url");
-const makeDir = require("make-dir");
+//@ts-ignore
+import filenamify from "filenamify";
+//@ts-ignore
+import humanizeUrl from "humanize-url";
+//@ts-ignore
+import makeDir from "make-dir";
+
 export const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
     const content = entry.response.content;
     const text = content.text;
@@ -22,7 +27,7 @@ export const convertEntryAsFilePathFormat = (entry: Entry, removeQueryString: bo
     const requestURL = entry.request.url;
     const stripSchemaURL: string = humanizeUrl(removeQueryString ? requestURL.split("?")[0] : requestURL);
     const dirnames: string[] = stripSchemaURL.split("/").map((pathname) => {
-        return filenamify(pathname, {maxLength: 255});
+        return filenamify(pathname, { maxLength: 255 });
     });
     const fileName = dirnames[dirnames.length - 1];
     if (
@@ -44,12 +49,14 @@ export interface ExtractOptions {
 }
 
 export const extract = (harContent: Har, options: ExtractOptions) => {
-    harContent.log.entries.forEach((entry) => {
+    harContent.log.entries.forEach(async (entry) => {
         const buffer = getEntryContentAsBuffer(entry);
         if (!buffer) {
             return;
         }
-        const outputPath = path.join(options.outputDir, convertEntryAsFilePathFormat(entry, options.removeQueryString));
+        const outputPath = await unusedFilename(
+            path.join(options.outputDir, convertEntryAsFilePathFormat(entry, options.removeQueryString))
+        );
         if (!options.dryRun) {
             makeDir.sync(path.dirname(outputPath));
         }

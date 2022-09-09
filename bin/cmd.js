@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 "use strict";
-const fs = require("fs");
-const path = require("path");
-const meow = require("meow");
-const { extract } = require("../lib/har-extractor.js");
+import fs from "fs";
+import path from "path";
+
+import { createRequire } from "module";
+const meow = createRequire(import.meta.url)("meow");
+
+import { extract } from "../lib/har-extractor.js";
+
 const cli = meow(
     `
     Usage
@@ -22,23 +26,23 @@ const cli = meow(
         flags: {
             output: {
                 type: "string",
-                alias: "o"
+                alias: "o",
             },
             removeQueryString: {
                 type: "boolean",
                 alias: "r",
-                default: false
+                default: false,
             },
             verbose: {
                 type: "boolean",
-                default: true
+                default: true,
             },
             dryRun: {
                 type: "boolean",
-                default: false
-            }
+                default: false,
+            },
         },
-        autoHelp: true
+        autoHelp: true,
     }
 );
 
@@ -52,7 +56,7 @@ try {
         verbose: cli.flags.verbose,
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
-        outputDir: cli.flags.output
+        outputDir: cli.flags.output,
     });
 } catch (error) {
     console.error(error);
