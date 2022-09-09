@@ -1,44 +1,51 @@
 #!/usr/bin/env node
 "use strict";
-const fs = require("fs");
-const path = require("path");
-const meow = require("meow");
-const { extract } = require("../lib/har-extractor.js");
+import fs from "fs";
+import path from "path";
+
+// Polyfill for es6 import support
+import { createRequire } from "module";
+const meow = createRequire(import.meta.url)("meow");
+
+import { extract } from "../lib/har-extractor.js";
+
 const cli = meow(
     `
     Usage
-      $ har-extractor <harfile> --output /path/to/output
+      $ har-extractor-easy <harfile> [--output ./output/path]
 
     Options:
-      --output, -o Output directory
-      --remove-query-string, -r Remove query string from file path
-      --dry-run Enable dry run mode
-      --verbose Show processing file path
+      --output, -o Output directory (Default = ./har)
+      --remove-query-string, -r Remove query string from file path (Default = true)
+      --dry-run Enable dry run mode (Default = false)
+      --verbose Show processing file path (Default = true)
 
     Examples
-      $ har-extractor ./net.har --output /path/to/output
+      $ har-extractor-easy ./net.har
+      (Extracts to new ./har directory)
 `,
     {
         flags: {
             output: {
                 type: "string",
-                alias: "o"
+                alias: "o",
+                default: "./har",
             },
             removeQueryString: {
                 type: "boolean",
                 alias: "r",
-                default: false
+                default: true,
             },
             verbose: {
                 type: "boolean",
-                default: true
+                default: true,
             },
             dryRun: {
                 type: "boolean",
-                default: false
-            }
+                default: false,
+            },
         },
-        autoHelp: true
+        autoHelp: true,
     }
 );
 
@@ -52,7 +59,7 @@ try {
         verbose: cli.flags.verbose,
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
-        outputDir: cli.flags.output
+        outputDir: cli.flags.output,
     });
 } catch (error) {
     console.error(error);
