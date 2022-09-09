@@ -9,27 +9,29 @@ const meow = createRequire(import.meta.url)("meow");
 
 import { extract } from "../lib/har-extractor.js";
 
+const DEFAULT_VAL = "!DEFAULT";
+
 const cli = meow(
     `
     Usage
       $ har-extractor-easy <harfile> [--output ./output/path]
 
     Options:
-      --output, -o Output directory (Default = ./har)
+      --output, -o Output directory (Default = ./[harfile-name])
       --remove-query-string, -r Remove query string from file path (Default = true)
       --dry-run Enable dry run mode (Default = false)
       --verbose Show processing file path (Default = true)
 
     Examples
       $ har-extractor-easy ./net.har
-      (Extracts to new ./har directory)
+      (Extracts to new directory with same name as har file eg. ./net-har/)
 `,
     {
         flags: {
             output: {
                 type: "string",
                 alias: "o",
-                default: "./har",
+                default: DEFAULT_VAL,
             },
             removeQueryString: {
                 type: "boolean",
@@ -52,14 +54,19 @@ const cli = meow(
 const harFilePath = cli.input[0];
 if (!harFilePath) {
     cli.showHelp();
+    throw "HAR File required";
 }
+const harInputPath = path.resolve(process.cwd(), harFilePath);
 try {
-    const harContent = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), harFilePath), "utf-8"));
+    const harContent = JSON.parse(fs.readFileSync(harInputPath, "utf-8"));
     extract(harContent, {
         verbose: cli.flags.verbose,
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
-        outputDir: cli.flags.output,
+        outputDir:
+            cli.flags.output === DEFAULT_VAL
+                ? path.resolve(process.cwd() + "/" + path.basename(harInputPath.replace(".", "-")))
+                : cli.flags.output,
     });
 } catch (error) {
     console.error(error);
