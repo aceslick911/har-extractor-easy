@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import { Har, Entry } from "har-format";
 import * as path from "path";
-import { unusedFilename } from "unused-filename";
 
 //@ts-ignore
 import filenamify from "filenamify";
@@ -23,22 +22,61 @@ export const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
     }
 };
 
-export const convertEntryAsFilePathFormat = (entry: Entry, removeQueryString: boolean = false): string => {
+const fPaths: string[] = [];
+
+const hasSameName = (file: string) => fPaths.includes(file);
+
+function uniqueFile(file: string) {
+    const extension = path.extname(file);
+    const basename = path.basename(file, path.extname(file));
+
+    let out = file;
+
+    let fId = 1;
+    while (hasSameName(out)) {
+        console.log("DUPE!!", out);
+        out = path.join(path.dirname(file), basename + fId + extension);
+        fId = fId + 1;
+    }
+
+    console.log(file, out);
+    return out;
+}
+
+const prettifyBufferJSON = (buffer: Buffer): Buffer => {
+    const json = JSON.parse(buffer.toString());
+    const prettyJSON = JSON.stringify(json, null, 2);
+    return Buffer.from(prettyJSON);
+};
+
+export const convertEntryAsFilePathFormat = (
+    buffer: Buffer,
+    entry: Entry,
+    removeQueryString: boolean = false
+): { uniquePath: string; updatedBuffer: Buffer } => {
     const requestURL = entry.request.url;
     const stripSchemaURL: string = humanizeUrl(removeQueryString ? requestURL.split("?")[0] : requestURL);
     const dirnames: string[] = stripSchemaURL.split("/").map((pathname) => {
         return filenamify(pathname, { maxLength: 255 });
     });
     const fileName = dirnames[dirnames.length - 1];
+
     if (
         fileName &&
         !fileName.includes(".html") &&
         entry.response.content.mimeType &&
         entry.response.content.mimeType.includes("text/html")
     ) {
-        return dirnames.join("/") + "/index.html";
+        return { uniquePath: dirnames.join("/") + "/index.html", updatedBuffer: buffer };
+    } else if (
+        fileName &&
+        !fileName.includes(".json") &&
+        entry.response.content.mimeType &&
+        entry.response.content.mimeType.includes("application/json")
+    ) {
+        return { uniquePath: dirnames.join("/") + ".json", updatedBuffer: prettifyBufferJSON(buffer) };
     }
-    return dirnames.join("/");
+    return { uniquePath: dirnames.join("/"), updatedBuffer: buffer };
 };
 
 export interface ExtractOptions {
@@ -54,9 +92,10 @@ export const extract = (harContent: Har, options: ExtractOptions) => {
         if (!buffer) {
             return;
         }
-        const outputPath = await unusedFilename(
-            path.join(options.outputDir, convertEntryAsFilePathFormat(entry, options.removeQueryString))
-        );
+        const { uniquePath, updatedBuffer } = convertEntryAsFilePathFormat(buffer, entry, options.removeQueryString);
+        const filePath = path.join(options.outputDir, uniquePath);
+        const outputPath = uniqueFile(filePath);
+        fPaths.push(outputPath);
         if (!options.dryRun) {
             makeDir.sync(path.dirname(outputPath));
         }
@@ -64,7 +103,7 @@ export const extract = (harContent: Har, options: ExtractOptions) => {
             console.log(outputPath);
         }
         if (!options.dryRun) {
-            fs.writeFileSync(outputPath, buffer);
+            fs.writeFileSync(outputPath, updatedBuffer);
         }
     });
 };

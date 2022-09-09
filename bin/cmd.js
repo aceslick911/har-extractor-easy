@@ -3,6 +3,7 @@
 import fs from "fs";
 import path from "path";
 
+// Polyfill for es6 import support
 import { createRequire } from "module";
 const meow = createRequire(import.meta.url)("meow");
 
@@ -11,13 +12,13 @@ import { extract } from "../lib/har-extractor.js";
 const cli = meow(
     `
     Usage
-      $ har-extractor <harfile> --output /path/to/output
+      $ har-extractor <harfile> [--output ./output/path]
 
     Options:
-      --output, -o Output directory
+      --output, -o Output directory (Default = ./har)
       --remove-query-string, -r Remove query string from file path
       --dry-run Enable dry run mode
-      --verbose Show processing file path
+      --verbose Show processing file path (Default = true)
 
     Examples
       $ har-extractor ./net.har --output /path/to/output
@@ -27,11 +28,12 @@ const cli = meow(
             output: {
                 type: "string",
                 alias: "o",
+                default: "./har",
             },
             removeQueryString: {
                 type: "boolean",
                 alias: "r",
-                default: false,
+                default: true,
             },
             verbose: {
                 type: "boolean",
