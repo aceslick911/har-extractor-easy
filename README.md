@@ -4,10 +4,11 @@ Based on [har-extractor](https://github.com/azu/har-extractor) by [azu](https://
 
 In addition, this fork will:
 
-1. Ensure filenames are unique so you dont lose queries
-2. By default, does not require a output directory parameter and will create a new unique folder in the current directory
-3. Ensures js mimetypes have the right file extension (via mime-db)
-4. Can prettify JSON files (application/json)
+1. Filter by file extension to extract (eg. json)
+2. Ensure filenames are unique so you dont lose queries
+3. By default, does not require a output directory parameter and will create a new unique folder in the current directory
+4. Ensures js mimetypes have the right file extension (via mime-db)
+5. Can prettify JSON files (application/json)
 
 A CLI that extract har file to directory.
 
@@ -24,9 +25,10 @@ Install with [npm](https://www.npmjs.com/):
 ## Usage
 
     Usage
-      $ har-extractor-easy <harfile>
+      $ har-extractor-easy <harfile> [--output ./output/path]
 
     Options:
+      --type, -t lowercase extension of file to extract. Can be one of: json, html, css, js, image, font, media, other. Default: off
       --output, -o Output directory (Default = ./[harfile-name])
       --remove-query-string, -r Remove query string from file path (Default = true)
       --dry-run Enable dry run mode (Default = false)

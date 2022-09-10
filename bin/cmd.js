@@ -18,6 +18,7 @@ const cli = meow(
       $ har-extractor-easy <harfile> [--output ./output/path]
 
     Options:
+      --type, -t lowercase extension of file to extract. Can be one of: json, html, css, js, image, font, media, other. Default: off
       --output, -o Output directory (Default = ./[harfile-name])
       --remove-query-string, -r Remove query string from file path (Default = true)
       --dry-run Enable dry run mode (Default = false)
@@ -30,6 +31,10 @@ const cli = meow(
 `,
     {
         flags: {
+            type: {
+                type: "string",
+                alias: "t",
+            },
             output: {
                 type: "string",
                 alias: "o",
@@ -76,6 +81,7 @@ try {
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
         pretty: cli.flags.pretty,
+        type: cli.flags.type,
         outputDir,
     });
 } catch (error) {

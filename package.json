@@ -1,6 +1,6 @@
 {
   "name": "har-extractor-easy",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "type": "module",
   "description": "A (easy) CLI that extract har file to unique files in a directory.",
   "scripts": {
@@ -11,7 +11,7 @@
     "watch": "tsc -p . --watch",
     "prepare": "npm run build",
     "version": "npm run prettier && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": " git push && git push --tags"
   },
   "keywords": [
     "har",
