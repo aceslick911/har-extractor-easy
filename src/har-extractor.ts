@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { Har, Entry } from "har-format";
 import * as path from "path";
+import knownMIME from "mime-db";
 
 //@ts-ignore
 import filenamify from "filenamify";
@@ -47,6 +48,19 @@ const prettifyBufferJSON = (buffer: Buffer): Buffer => {
     return Buffer.from(prettyJSON);
 };
 
+const knownMimeMap = Object.keys(knownMIME)
+    .map((v: keyof typeof knownMIME) => {
+        const extensions = knownMIME[v].extensions;
+        if (extensions === undefined) {
+            return null;
+        } else {
+            return { key: v, extension: "." + extensions[0] };
+        }
+    })
+    .filter((v) => v !== null) as { key: string; extension: string }[];
+
+const filteredMap = knownMimeMap.reduce((acc, curr) => ({ ...(acc || {}), [curr.key]: curr }), {});
+
 const mimeMap: {
     [key in string]: {
         extension: string;
@@ -54,6 +68,7 @@ const mimeMap: {
         defaultFilename?: string;
     };
 } = {
+    ...filteredMap,
     "application/json": {
         extension: ".json",
         pretty: prettifyBufferJSON,
