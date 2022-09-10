@@ -6,7 +6,7 @@ import { Entry } from "har-format";
 import filenamify from "filenamify";
 //@ts-ignore
 import humanizeUrl from "humanize-url";
-import { MimeInfo, mimeMap } from "./mime-resolver.js";
+import { mimeMap, resolveEntryForKnownMime } from "./mime-resolver.js";
 
 const knownNewPaths: string[] = [];
 
@@ -27,29 +27,6 @@ export const getAvailableFilename = (file: string) => {
     knownNewPaths.push(outputPath);
 
     return outputPath;
-};
-
-const resolveEntryForKnownMime = (props: {
-    mimeInfo: MimeInfo;
-    outputFileName: string;
-    buffer: Buffer;
-    dirnames: string[];
-}) => {
-    const { mimeInfo, outputFileName, buffer, dirnames } = props;
-
-    const extension = mimeInfo.extension;
-    const pretty = mimeInfo.pretty;
-    const defaultFilename = mimeInfo.defaultFilename;
-
-    const updatedBuffer = pretty === undefined ? buffer : pretty(buffer);
-
-    if (defaultFilename !== undefined && (!outputFileName || !outputFileName.includes(extension))) {
-        return { uniquePath: dirnames.join("/") + defaultFilename, updatedBuffer: buffer };
-    } else {
-        const addExtension = outputFileName.includes(extension) ? "" : extension;
-        dirnames[dirnames.length - 1] = outputFileName + addExtension;
-        return { uniquePath: dirnames.join("/"), updatedBuffer };
-    }
 };
 
 export const convertEntryAsFilePathFormat = (

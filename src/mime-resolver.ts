@@ -14,7 +14,7 @@ const knownMimeMap = Object.keys(knownMIME)
 
 const filteredMimeMap = knownMimeMap.reduce((acc, curr) => ({ ...(acc || {}), [curr.key]: curr }), {});
 
-export interface MimeInfo {
+interface MimeInfo {
     extension: string;
     pretty?: (buffer: Buffer) => Buffer;
     defaultFilename?: string;
@@ -47,4 +47,27 @@ export const mimeMap: MimeMapper = {
     "image/bmp": {
         extension: ".bmp",
     },
+};
+
+export const resolveEntryForKnownMime = (props: {
+    mimeInfo: MimeInfo;
+    outputFileName: string;
+    buffer: Buffer;
+    dirnames: string[];
+}) => {
+    const { mimeInfo, outputFileName, buffer, dirnames } = props;
+
+    const extension = mimeInfo.extension;
+    const pretty = mimeInfo.pretty;
+    const defaultFilename = mimeInfo.defaultFilename;
+
+    const updatedBuffer = pretty === undefined ? buffer : pretty(buffer);
+
+    if (defaultFilename !== undefined && (!outputFileName || !outputFileName.includes(extension))) {
+        return { uniquePath: dirnames.join("/") + defaultFilename, updatedBuffer: buffer };
+    } else {
+        const addExtension = outputFileName.includes(extension) ? "" : extension;
+        dirnames[dirnames.length - 1] = outputFileName + addExtension;
+        return { uniquePath: dirnames.join("/"), updatedBuffer };
+    }
 };
