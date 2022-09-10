@@ -5,8 +5,9 @@ Based on [har-extractor](https://github.com/azu/har-extractor) by [azu](https://
 In addition, this fork will:
 
 1. Ensure filenames are unique so you dont lose queries
-2. Ensures js mimetypes have the right file extension
-3. Can prettify JSON files (application/json) and have the correct file-extension
+2. By default, does not require a output directory parameter and will create a new unique folder in the current directory
+3. Ensures js mimetypes have the right file extension (via mime-db)
+4. Can prettify JSON files (application/json)
 
 A CLI that extract har file to directory.
 
@@ -23,7 +24,7 @@ Install with [npm](https://www.npmjs.com/):
 ## Usage
 
     Usage
-      $ har-extractor-easy <harfile> [--output ./output/path]
+      $ har-extractor-easy <harfile>
 
     Options:
       --output, -o Output directory (Default = ./[harfile-name])
@@ -35,6 +36,12 @@ Install with [npm](https://www.npmjs.com/):
     Examples
       $ har-extractor-easy ./net.har
       (Extracts to new directory with same name as har file eg. ./net-har/)
+
+If you wish to run this tool after cloning, the cmd.js file is +x and will be run using node. Eg:
+
+```sh
+  $ ./bin/cmd.js ~/myHar.har
+```
 
 ## Example
 
