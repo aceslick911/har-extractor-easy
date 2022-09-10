@@ -21,6 +21,7 @@ const cli = meow(
       --remove-query-string, -r Remove query string from file path (Default = true)
       --dry-run Enable dry run mode (Default = false)
       --verbose Show processing file path (Default = true)
+      --pretty Prettifies JSON files (Default = true)
 
     Examples
       $ har-extractor-easy ./net.har
@@ -46,6 +47,10 @@ const cli = meow(
                 type: "boolean",
                 default: false,
             },
+            pretty: {
+                type: "boolean",
+                default: true,
+            },
         },
         autoHelp: true,
     }
@@ -63,6 +68,7 @@ try {
         verbose: cli.flags.verbose,
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
+        pretty: cli.flags.pretty,
         outputDir:
             cli.flags.output === DEFAULT_VAL
                 ? path.resolve(process.cwd() + "/" + path.basename(harInputPath.replace(".", "-")))

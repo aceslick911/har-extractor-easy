@@ -47,6 +47,36 @@ const prettifyBufferJSON = (buffer: Buffer): Buffer => {
     return Buffer.from(prettyJSON);
 };
 
+const mimeMap: {
+    [key in string]: {
+        extension: string;
+        pretty?: (buffer: Buffer) => Buffer;
+        defaultFilename?: string;
+    };
+} = {
+    "application/json": {
+        extension: ".json",
+        pretty: prettifyBufferJSON,
+    },
+    "text/javascript": {
+        extension: ".js",
+        defaultFilename: "script.js",
+    },
+    "text/html": {
+        extension: ".html",
+        defaultFilename: "index.html",
+    },
+    "image/png": {
+        extension: ".png",
+    },
+    "image/gif": {
+        extension: ".gif",
+    },
+    "image/bmp": {
+        extension: ".bmp",
+    },
+};
+
 export const convertEntryAsFilePathFormat = (
     buffer: Buffer,
     entry: Entry,
@@ -57,23 +87,52 @@ export const convertEntryAsFilePathFormat = (
     const dirnames: string[] = stripSchemaURL.split("/").map((pathname) => {
         return filenamify(pathname, { maxLength: 255 });
     });
-    const fileName = dirnames[dirnames.length - 1];
+    const outputFileName = dirnames[dirnames.length - 1];
 
-    if (
-        fileName &&
-        !fileName.includes(".html") &&
-        entry.response.content.mimeType &&
-        entry.response.content.mimeType.includes("text/html")
-    ) {
-        return { uniquePath: dirnames.join("/") + "/index.html", updatedBuffer: buffer };
-    } else if (entry.response.content.mimeType && entry.response.content.mimeType.includes("application/json")) {
-        if (fileName && !fileName.includes(".json")) {
-            return { uniquePath: dirnames.join("/") + ".json", updatedBuffer: prettifyBufferJSON(buffer) };
+    const mime = entry.response.content.mimeType;
+    const mimeInfo = mimeMap[mime];
+    if (mimeInfo === undefined) {
+        return { uniquePath: dirnames.join("/"), updatedBuffer: buffer };
+    } else {
+        const extension = mimeInfo.extension;
+        const pretty = mimeInfo.pretty;
+        const defaultFilename = mimeInfo.defaultFilename;
+
+        console.log("process", mimeInfo, outputFileName, extension, pretty, defaultFilename);
+
+        const updatedBuffer = pretty === undefined ? buffer : pretty(buffer);
+
+        console.log("TEST", {
+            A: defaultFilename !== undefined, //false
+            B: !outputFileName, //false
+            C: !outputFileName.includes(extension), //true
+        });
+
+        if (defaultFilename !== undefined && (!outputFileName || !outputFileName.includes(extension))) {
+            console.log("!! DEFAULT");
+            //  dirnames[dirnames.length - 1] = defaultFilename;
+            return { uniquePath: dirnames.join("/") + defaultFilename, updatedBuffer: buffer };
+        } else {
+            console.log("!! DEFAULT2");
+            const addExtension = outputFileName.includes(extension) ? "" : extension;
+            dirnames[dirnames.length - 1] = outputFileName + addExtension;
+            return { uniquePath: dirnames.join("/"), updatedBuffer };
         }
-        return { uniquePath: dirnames.join("/"), updatedBuffer: prettifyBufferJSON(buffer) };
     }
 
-    return { uniquePath: dirnames.join("/"), updatedBuffer: buffer };
+    // if (
+    //     outputFileName &&
+    //     !outputFileName.includes(".html") &&
+    //     entry.response.content.mimeType &&
+    //     entry.response.content.mimeType.includes("text/html")
+    // ) {
+    //     return { uniquePath: dirnames.join("/") + "/index.html", updatedBuffer: buffer };
+    // } else if (entry.response.content.mimeType && entry.response.content.mimeType.includes("application/json")) {
+    //     if (outputFileName && !outputFileName.includes(".json")) {
+    //         return { uniquePath: dirnames.join("/") + ".json", updatedBuffer: prettifyBufferJSON(buffer) };
+    //     }
+    //     return { uniquePath: dirnames.join("/"), updatedBuffer: prettifyBufferJSON(buffer) };
+    // }
 };
 
 export interface ExtractOptions {

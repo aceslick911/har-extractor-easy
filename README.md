@@ -5,7 +5,8 @@ Based on [har-extractor](https://github.com/azu/har-extractor) by [azu](https://
 In addition, this fork will:
 
 1. Ensure filenames are unique so you dont lose queries
-2. Any JSON files (application/json) are prettified and have the correct file-extension
+2. Ensures js mimetypes have the right file extension
+3. Can prettify JSON files (application/json) and have the correct file-extension
 
 A CLI that extract har file to directory.
 
@@ -25,14 +26,15 @@ Install with [npm](https://www.npmjs.com/):
       $ har-extractor-easy <harfile> [--output ./output/path]
 
     Options:
-      --output, -o Output directory (Default = ./har)
+      --output, -o Output directory (Default = ./[harfile-name])
       --remove-query-string, -r Remove query string from file path (Default = true)
       --dry-run Enable dry run mode (Default = false)
       --verbose Show processing file path (Default = true)
+      --pretty Prettifies JSON files (Default = true)
 
     Examples
       $ har-extractor-easy ./net.har
-      (Extracts to new ./har directory)
+      (Extracts to new directory with same name as har file eg. ./net-har/)
 
 ## Example
 
