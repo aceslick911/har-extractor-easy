@@ -13,4 +13,10 @@ const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
     }
 };
 
+export const prettifyBufferJSON = (buffer: Buffer): Buffer => {
+    const json = JSON.parse(buffer.toString());
+    const prettyJSON = JSON.stringify(json, null, 2);
+    return Buffer.from(prettyJSON);
+};
+
 export default getEntryContentAsBuffer;
