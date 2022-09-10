@@ -5,5 +5,6 @@ export interface ExtractOptions {
     dryRun?: boolean;
     removeQueryString?: boolean;
     pretty?: boolean;
+    type?: string;
 }
 export declare const extract: (harContent: Har, options: ExtractOptions) => void;

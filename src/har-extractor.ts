@@ -14,10 +14,17 @@ export interface ExtractOptions {
     dryRun?: boolean;
     removeQueryString?: boolean;
     pretty?: boolean;
+    type?: string;
 }
 
 export const extract = (harContent: Har, options: ExtractOptions) => {
     harContent.log.entries.forEach(async (entry) => {
+        if (options.type) {
+            if (!entry.response.content.mimeType.includes(options.type)) {
+                return;
+            }
+        }
+
         const buffer = getEntryContentAsBuffer(entry);
         if (!buffer) {
             return;
