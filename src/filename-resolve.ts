@@ -6,7 +6,7 @@ import { Entry } from "har-format";
 import filenamify from "filenamify";
 //@ts-ignore
 import humanizeUrl from "humanize-url";
-import { mimeMap, resolveEntryForKnownMime } from "./mime-resolver.js";
+import { mimeMap, resolveFilePathForKnownMime } from "./mime-resolver.js";
 
 const knownNewPaths: string[] = [];
 
@@ -39,13 +39,13 @@ export const convertEntryAsFilePathFormat = (
     const dirnames: string[] = stripSchemaURL.split("/").map((pathname) => {
         return filenamify(pathname, { maxLength: 255 });
     });
-    const outputFileName = dirnames[dirnames.length - 1];
+    const targetFilename = dirnames[dirnames.length - 1];
 
     const mime = entry.response.content.mimeType;
     const mimeInfo = mimeMap[mime];
     if (mimeInfo === undefined) {
         return { uniquePath: dirnames.join("/"), updatedBuffer: buffer };
     } else {
-        return resolveEntryForKnownMime({ mimeInfo, outputFileName, buffer, dirnames });
+        return resolveFilePathForKnownMime({ mimeInfo, targetFilename, buffer, dirnames });
     }
 };

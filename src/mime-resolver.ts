@@ -49,13 +49,13 @@ export const mimeMap: MimeMapper = {
     },
 };
 
-export const resolveEntryForKnownMime = (props: {
+export const resolveFilePathForKnownMime = (props: {
     mimeInfo: MimeInfo;
-    outputFileName: string;
+    targetFilename: string;
     buffer: Buffer;
     dirnames: string[];
 }) => {
-    const { mimeInfo, outputFileName, buffer, dirnames } = props;
+    const { mimeInfo, targetFilename, buffer, dirnames } = props;
 
     const extension = mimeInfo.extension;
     const pretty = mimeInfo.pretty;
@@ -63,11 +63,11 @@ export const resolveEntryForKnownMime = (props: {
 
     const updatedBuffer = pretty === undefined ? buffer : pretty(buffer);
 
-    if (defaultFilename !== undefined && (!outputFileName || !outputFileName.includes(extension))) {
+    if (defaultFilename !== undefined && (!targetFilename || !targetFilename.includes(extension))) {
         return { uniquePath: dirnames.join("/") + defaultFilename, updatedBuffer: buffer };
     } else {
-        const addExtension = outputFileName.includes(extension) ? "" : extension;
-        dirnames[dirnames.length - 1] = outputFileName + addExtension;
+        const addExtension = targetFilename.includes(extension) ? "" : extension;
+        dirnames[dirnames.length - 1] = targetFilename + addExtension;
         return { uniquePath: dirnames.join("/"), updatedBuffer };
     }
 };
