@@ -13,6 +13,7 @@ export interface ExtractOptions {
     verbose?: boolean;
     dryRun?: boolean;
     removeQueryString?: boolean;
+    pretty?: boolean;
 }
 
 export const extract = (harContent: Har, options: ExtractOptions) => {
@@ -21,7 +22,12 @@ export const extract = (harContent: Har, options: ExtractOptions) => {
         if (!buffer) {
             return;
         }
-        const { uniquePath, updatedBuffer } = convertEntryAsFilePathFormat(buffer, entry, options.removeQueryString);
+        const { uniquePath, updatedBuffer } = convertEntryAsFilePathFormat(
+            buffer,
+            entry,
+            options.removeQueryString,
+            options.pretty
+        );
 
         const outputPath = getAvailableFilename(path.join(options.outputDir, uniquePath));
 

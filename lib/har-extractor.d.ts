@@ -4,5 +4,6 @@ export interface ExtractOptions {
     verbose?: boolean;
     dryRun?: boolean;
     removeQueryString?: boolean;
+    pretty?: boolean;
 }
 export declare const extract: (harContent: Har, options: ExtractOptions) => void;

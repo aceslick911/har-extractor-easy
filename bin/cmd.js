@@ -8,6 +8,7 @@ import { createRequire } from "module";
 const meow = createRequire(import.meta.url)("meow");
 
 import { extract } from "../lib/har-extractor.js";
+import { getAvailableDirectory } from "../lib/filename-resolve.js";
 
 const DEFAULT_VAL = "!DEFAULT";
 
@@ -64,15 +65,18 @@ if (!harFilePath) {
 const harInputPath = path.resolve(process.cwd(), harFilePath);
 try {
     const harContent = JSON.parse(fs.readFileSync(harInputPath, "utf-8"));
+
+    let outputDir = cli.flags.output;
+    if (outputDir === DEFAULT_VAL) {
+        outputDir = getAvailableDirectory(process.cwd() + "/" + path.basename(harInputPath.replace(".", "-")));
+    }
+
     extract(harContent, {
         verbose: cli.flags.verbose,
         dryRun: cli.flags.dryRun,
         removeQueryString: cli.flags.removeQueryString,
         pretty: cli.flags.pretty,
-        outputDir:
-            cli.flags.output === DEFAULT_VAL
-                ? path.resolve(process.cwd() + "/" + path.basename(harInputPath.replace(".", "-")))
-                : cli.flags.output,
+        outputDir,
     });
 } catch (error) {
     console.error(error);

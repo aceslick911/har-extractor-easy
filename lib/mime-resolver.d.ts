@@ -8,11 +8,12 @@ export declare type MimeMapper = {
     [key in string]: MimeInfo;
 };
 export declare const mimeMap: MimeMapper;
-export declare const resolveEntryForKnownMime: (props: {
+export declare const resolveFilePathForKnownMime: (props: {
     mimeInfo: MimeInfo;
-    outputFileName: string;
+    targetFilename: string;
     buffer: Buffer;
     dirnames: string[];
+    pretty: boolean;
 }) => {
     uniquePath: string;
     updatedBuffer: Buffer;

@@ -93,4 +93,4 @@ For bugs and feature requests, [please create an issue](https://github.com/acesl
 
 ## License
 
-MIT © azu
+MIT © aceslick911

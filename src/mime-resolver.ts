@@ -54,14 +54,14 @@ export const resolveFilePathForKnownMime = (props: {
     targetFilename: string;
     buffer: Buffer;
     dirnames: string[];
+    pretty: boolean;
 }) => {
-    const { mimeInfo, targetFilename, buffer, dirnames } = props;
+    const { mimeInfo, targetFilename, buffer, dirnames, pretty } = props;
 
     const extension = mimeInfo.extension;
-    const pretty = mimeInfo.pretty;
     const defaultFilename = mimeInfo.defaultFilename;
 
-    const updatedBuffer = pretty === undefined ? buffer : pretty(buffer);
+    const updatedBuffer = pretty && mimeInfo.pretty ? mimeInfo.pretty(buffer) : buffer;
 
     if (defaultFilename !== undefined && (!targetFilename || !targetFilename.includes(extension))) {
         return { uniquePath: dirnames.join("/") + defaultFilename, updatedBuffer: buffer };

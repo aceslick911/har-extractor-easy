@@ -29,10 +29,22 @@ export const getAvailableFilename = (file: string) => {
     return outputPath;
 };
 
+export const getAvailableDirectory = (dir: string) => {
+    let index = 1;
+    console.log("CH", dir, fs.existsSync(dir));
+    while (!dir || fs.existsSync(dir)) {
+        dir = path.resolve(dir + (index === 1 ? "" : "-" + index));
+        index++;
+        console.log("CH2", dir, fs.existsSync(dir));
+    }
+    return dir;
+};
+
 export const convertEntryAsFilePathFormat = (
     buffer: Buffer,
     entry: Entry,
-    removeQueryString: boolean = false
+    removeQueryString: boolean = false,
+    pretty: boolean = true
 ): { uniquePath: string; updatedBuffer: Buffer } => {
     const requestURL = entry.request.url;
     const stripSchemaURL: string = humanizeUrl(removeQueryString ? requestURL.split("?")[0] : requestURL);
@@ -46,6 +58,6 @@ export const convertEntryAsFilePathFormat = (
     if (mimeInfo === undefined) {
         return { uniquePath: dirnames.join("/"), updatedBuffer: buffer };
     } else {
-        return resolveFilePathForKnownMime({ mimeInfo, targetFilename, buffer, dirnames });
+        return resolveFilePathForKnownMime({ mimeInfo, targetFilename, buffer, dirnames, pretty });
     }
 };
