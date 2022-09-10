@@ -9,18 +9,22 @@
     "prepublish": "npm run --if-present build",
     "test": "mocha \"test/**/*.ts\"",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\"",
-    "watch": "tsc -p . --watch"
+    "watch": "tsc -p . --watch",
+    "prepare": "npm run build",
+    "version": "npm run prettier && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
-    "archieve",
-    "directory",
-    "extract",
-    "file",
-    "folder",
     "har",
+    "extract",
+    "decode",
+    "query",
+    "files",
+    "folder",
+    "chrome",
     "unzip"
   ],
-  "homepage": "https://github.com/aceslick911/har-extractor-easy",
+  "homepage": "https://github.com/aceslick911/har-extractor-easy#readme",
   "bugs": {
     "url": "https://github.com/aceslick911/har-extractor-easy/issues"
   },
