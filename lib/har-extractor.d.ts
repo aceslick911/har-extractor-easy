@@ -1,10 +1,4 @@
-/// <reference types="node" />
-import { Har, Entry } from "har-format";
-export declare const getEntryContentAsBuffer: (entry: Entry) => Buffer | undefined;
-export declare const convertEntryAsFilePathFormat: (buffer: Buffer, entry: Entry, removeQueryString?: boolean) => {
-    uniquePath: string;
-    updatedBuffer: Buffer;
-};
+import { Har } from "har-format";
 export interface ExtractOptions {
     outputDir: string;
     verbose?: boolean;
