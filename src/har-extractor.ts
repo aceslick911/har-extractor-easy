@@ -4,8 +4,9 @@ import * as path from "path";
 
 //@ts-ignore
 import makeDir from "make-dir";
-import { getEntryContentAsBuffer } from "./data-utils";
-import { convertEntryAsFilePathFormat, getAvailableFilename } from "./filename-resolve";
+import getEntryContentAsBuffer from "./data-utils.js";
+
+import { convertEntryAsFilePathFormat, getAvailableFilename } from "./filename-resolve.js";
 
 export interface ExtractOptions {
     outputDir: string;

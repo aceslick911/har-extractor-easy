@@ -1,18 +1,24 @@
 {
     "compilerOptions": {
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+
         /* Basic Options */
         "module": "es6",
         "moduleResolution": "node",
         "newLine": "LF",
         "outDir": "./lib/",
         "target": "es5",
-        "esModuleInterop": true,
         "sourceMap": true,
         "declaration": true,
         "jsx": "preserve",
         "lib": ["es2017", "dom"],
-        /* Strict Type-Checking Options */
-        "strict": true,
         /* Additional Checks */
         "noUnusedLocals": true,
         /* Report errors on unused locals. */
@@ -23,6 +29,6 @@
         "noFallthroughCasesInSwitch": true
         /* Report errors for fallthrough cases in switch statement. */
     },
-    "include": ["src/**/*"],
+    "include": ["src"],
     "exclude": [".git", "node_modules"]
 }

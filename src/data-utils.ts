@@ -1,6 +1,6 @@
 import { Entry } from "har-format";
 
-export const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
+const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
     const content = entry.response.content;
     const text = content.text;
     if (text === undefined) {
@@ -12,3 +12,5 @@ export const getEntryContentAsBuffer = (entry: Entry): Buffer | undefined => {
         return Buffer.from(text);
     }
 };
+
+export default getEntryContentAsBuffer;

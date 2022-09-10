@@ -1,3 +1,4 @@
 /// <reference types="node" />
 import { Entry } from "har-format";
-export declare const getEntryContentAsBuffer: (entry: Entry) => Buffer | undefined;
+declare const getEntryContentAsBuffer: (entry: Entry) => Buffer | undefined;
+export default getEntryContentAsBuffer;
